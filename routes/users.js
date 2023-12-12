@@ -1,9 +1,22 @@
-var express = require('express');
-var router = express.Router();
+const mongoose = require("mongoose")
+var plm = require("passport-local-mongoose")
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+mongoose.connect("mongodb://127.0.0.1:27017/instaclone")
+.then(()=>{
+  console.log("Mongo db connected to the Server")
+})
+.catch((err)=>{
+  console.log(err,"Internal Server Error")
+})
 
-module.exports = router;
+const userSchema = mongoose.Schema({
+  username:String,
+  name:String,
+  email:String,
+  password:String,
+  profileImage:String,
+  posts :[{ type : mongoose.Schema.Types.ObjectId, ref : "post"}]
+})
+
+userSchema.plugin(plm)
+module.exports = mongoose.model("user",userSchema)
